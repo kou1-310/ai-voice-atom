@@ -1,0 +1,6 @@
+[submodule "third_party/irodori-tts"]
+	path = third_party/irodori-tts
+	url = https://github.com/Aratako/Irodori-TTS.git
+[submodule "third_party/moonshine"]
+	path = third_party/moonshine
+	url = https://github.com/moonshine-ai/moonshine.git

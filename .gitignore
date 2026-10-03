@@ -1,0 +1,26 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.venv/
+host/.venv/
+.cache/
+third_party/*/.venv/
+
+firmware/atom/.pio/
+firmware/atom/.pioenvs/
+firmware/atom/.piolibdeps/
+
+.DS_Store
+ref
+
+.env
+reference.wav
+# 話者リファレンス音声（ユーザー提供の音源。著作権物を含むためコミットしない）
+host/voices/*.wav
+# 参照音声から生成したモード案内音声（host/scripts/generate_mode_prompts.py の出力）
+firmware/atom/include/mode_prompts.h
+firmware/atom/prompts/
+debug_audio/
+# デバイス別ペルソナ定義（実体）。雛形 device_profiles.example.json はコミットする。
+device_profiles.json

@@ -1,0 +1,7 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "python3 /mnt/g/ai-voice-atom/.claude/statusline.py",
+    "padding": 0
+  }
+}

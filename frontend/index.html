@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Voice Atom Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@700;900&family=Noto+Sans+JP:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css?v=4" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span class="brand__name">AI VOICE ATOM</span>
+      </div>
+      <div class="status-chips" aria-label="バックエンド稼働状態">
+        <span class="chip" data-service="llm">
+          <span class="chip__dot" data-state="unknown"></span>
+          <span class="chip__label">LLM</span>
+          <span class="chip__state" id="status-llm">確認中</span>
+        </span>
+        <span class="chip" data-service="tts">
+          <span class="chip__dot" data-state="unknown"></span>
+          <span class="chip__label">TTS</span>
+          <span class="chip__state" id="status-tts">確認中</span>
+        </span>
+        <span class="chip" data-service="stt">
+          <span class="chip__dot" data-state="unknown"></span>
+          <span class="chip__label">STT</span>
+          <span class="chip__state" id="status-stt">確認中</span>
+        </span>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <p class="eyebrow">AUTO DIALOGUE</p>
+        <h1 class="hero__title">2体のAIに、話させる。</h1>
+        <p class="hero__lede">
+          別々のペルソナと声色をもつ2体のAIを選び、話題をひとつ渡すと、ブラウザ上で交互に会話します。
+          各ターンの音声はそれぞれの声で再生されます。
+        </p>
+      </section>
+
+      <section class="stage" aria-label="会話ステージ">
+        <article class="persona" id="persona-a" data-voice="a">
+          <p class="persona__role">PERSONA A</p>
+          <h2 class="persona__name" id="persona-a-name">—</h2>
+          <p class="persona__id" id="persona-a-id">—</p>
+          <div class="wave" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </article>
+
+        <div class="bridge" id="bridge" data-dir="idle" aria-hidden="true">
+          <div class="bridge__line">
+            <span class="bridge__pulse"></span>
+          </div>
+          <p class="bridge__status" id="bridge-status">待機中</p>
+        </div>
+
+        <article class="persona" id="persona-b" data-voice="b">
+          <p class="persona__role">PERSONA B</p>
+          <h2 class="persona__name" id="persona-b-name">—</h2>
+          <p class="persona__id" id="persona-b-id">—</p>
+          <div class="wave" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </article>
+      </section>
+
+      <section class="controls">
+        <div class="controls__mode">
+          <div class="modeswitch" role="radiogroup" aria-label="実行モード">
+            <label class="modeswitch__seg">
+              <input type="radio" name="run-mode" value="browser" checked />
+              <span class="modeswitch__face">
+                <span class="modeswitch__title">画面でデモ</span>
+                <span class="modeswitch__sub">実機なし・この画面で再生</span>
+              </span>
+            </label>
+            <label class="modeswitch__seg">
+              <input type="radio" name="run-mode" value="relay" />
+              <span class="modeswitch__face">
+                <span class="modeswitch__title">実機で会話</span>
+                <span class="modeswitch__sub">2体の会話を実機で再生（1台でも可）</span>
+              </span>
+            </label>
+            <label class="modeswitch__seg">
+              <input type="radio" name="run-mode" value="chat" />
+              <span class="modeswitch__face">
+                <span class="modeswitch__title">実機に話しかける</span>
+                <span class="modeswitch__sub">ペルソナが実機の声で答える</span>
+              </span>
+            </label>
+          </div>
+          <p class="modeswitch__hint" id="connected" hidden></p>
+        </div>
+        <form id="dialogue-form" class="controls__form">
+          <div class="field">
+            <label class="field__label" for="select-a" id="select-a-label">ペルソナ A</label>
+            <select id="select-a" class="field__input"></select>
+          </div>
+          <div class="field" id="field-b">
+            <label class="field__label" for="select-b">ペルソナ B</label>
+            <select id="select-b" class="field__input"></select>
+          </div>
+          <div class="field" id="field-output" hidden>
+            <label class="field__label" for="output-device">スピーカー（実機）</label>
+            <select id="output-device" class="field__input"></select>
+          </div>
+          <div class="field field--grow">
+            <label class="field__label" for="topic" id="topic-label">話題（最初の一言）</label>
+            <input
+              id="topic"
+              class="field__input"
+              type="text"
+              value="好きな食べ物について話しましょう"
+              autocomplete="off"
+            />
+          </div>
+          <div class="field field--narrow" id="field-turns">
+            <label class="field__label" for="max-turns">ターン数</label>
+            <input id="max-turns" class="field__input" type="number" min="2" max="20" value="6" />
+          </div>
+          <div class="controls__buttons">
+            <button type="submit" id="start-button" class="btn btn--primary">会話をはじめる</button>
+            <button type="button" id="stop-button" class="btn btn--secondary" disabled>停止</button>
+          </div>
+        </form>
+        <p class="controls__note" id="notice" role="status"></p>
+      </section>
+
+      <section class="log" aria-label="会話ログ">
+        <p class="log__empty" id="log-empty">ペルソナを2体選び、話題を入れて「会話をはじめる」。</p>
+        <ol class="log__list" id="log-list"></ol>
+      </section>
+    </main>
+
+    <script src="./app.js?v=5"></script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "python.defaultInterpreterPath": "/usr/bin/python3",
+  "platformio-ide.useBuiltinPython": true,
+  "platformio-ide.useBuiltinPIOCore": true,
+  "platformio-ide.customPATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+  "platformio-ide.activateProjectOnTextEditorChange": true,
+  "platformio-ide.autoOpenPlatformIOIniFile": true,
+  "cmake.ignoreCMakeListsMissing": true
+}

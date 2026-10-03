@@ -1,0 +1,58 @@
+[project]
+name = "ai-voice-atom-host"
+version = "0.1.0"
+description = "Host services for AtomS3-Lite voice and web control integration"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115.0,<1.0.0",
+  "uvicorn[standard]>=0.30.0,<1.0.0",
+  "pydantic>=2.8.0,<3.0.0",
+  "numpy>=2.0.0,<3.0.0",
+  "openai>=1.30.0,<2.0.0",
+  "moonshine-voice>=0.0.62",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.2.0,<9.0.0",
+  "httpx>=0.27.0,<1.0.0",
+  "ruff>=0.6.0,<1.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+# Lint / 整形ゲート。品質ゲート（docs/ai-native-rules.md の Done 定義）で参照する。
+# 設定ライブラリではなく開発ツールなので「外部の設定ライブラリ不使用」規約には抵触しない。
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+# submodule（third_party）と venv は対象外。host 配下の app/ と tests/ のみを見る。
+extend-exclude = ["../third_party", ".venv"]
+
+[tool.ruff.lint]
+# E/W=pycodestyle, F=pyflakes, I=import 整列, UP=pyupgrade, B=bugbear,
+# SIM=simplify, C4=comprehension。まず壊れにくい中核ルールに絞る（S/N 比優先）。
+select = ["E", "W", "F", "I", "UP", "B", "SIM", "C4"]
+# E501（行長）は line-length と formatter に委ねる。B008 は FastAPI の Depends() 既定値で必須。
+ignore = ["E501", "B008"]
+
+[tool.ruff.lint.per-file-ignores]
+# テストでは未使用 import の許容や長い fixture を許す。
+"tests/*" = ["B"]
+
+[tool.uv.sources]
+moonshine-voice = { path = "../third_party/moonshine/python", editable = true }

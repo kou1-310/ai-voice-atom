@@ -1,0 +1,713 @@
+:root {
+  /* 下地 */
+  --canvas: #f4f7fa;
+  --paper: #ffffff;
+  --ink: #0c1b2a;
+  --muted: #5b6b7a;
+  --line: #dce5ec;
+
+  /* ブランド */
+  --brand-blue: #0067a8;
+  --brand-blue-strong: #004e80;
+  --blue-bright: #0090d4;
+  --cyan: #28c0e6;
+  --accent-grad: linear-gradient(90deg, #0067a8 0%, #28c0e6 100%);
+
+  /* 話者 */
+  --voice-a: #0067a8;
+  --voice-b: #00a6a0;
+
+  /* 状態 */
+  --ok: #1fa971;
+  --warn: #e08a1e;
+  --err: #d14343;
+  --idle: #9aa7b2;
+
+  --radius-card: 12px;
+  --radius-pill: 999px;
+  --shadow-rest: 0 1px 2px rgba(12, 27, 42, 0.04);
+  --shadow-hover: 0 12px 28px rgba(0, 103, 168, 0.1);
+  --maxw: min(1100px, 92vw);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: "Noto Sans JP", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2 {
+  font-family: "Zen Kaku Gothic New", "Noto Sans JP", sans-serif;
+  margin: 0;
+}
+
+/* ---------- トップバー ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.75rem clamp(1rem, 4vw, 2.5rem);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.brand__mark {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-grad);
+  box-shadow: 0 0 0 4px rgba(0, 103, 168, 0.12);
+}
+
+.brand__name {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  font-size: 0.85rem;
+}
+
+.status-chips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+}
+
+.chip__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--idle);
+  flex: none;
+}
+
+.chip__dot[data-state="configured"] {
+  background: var(--ok);
+  box-shadow: 0 0 0 3px rgba(31, 169, 113, 0.18);
+}
+
+.chip__dot[data-state="not-configured"] {
+  background: var(--err);
+}
+
+.chip__label {
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.chip__state {
+  font-weight: 500;
+}
+
+/* ---------- ページ ---------- */
+.page {
+  width: var(--maxw);
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem) 0 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--brand-blue);
+}
+
+/* ---------- ヒーロー ---------- */
+.hero__title {
+  font-weight: 900;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.hero__lede {
+  margin: 1rem 0 0;
+  max-width: 52ch;
+  color: var(--muted);
+}
+
+/* ---------- 会話ステージ ---------- */
+.stage {
+  display: grid;
+  grid-template-columns: 1fr minmax(140px, 280px) 1fr;
+  align-items: stretch;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.persona {
+  position: relative;
+  padding: 1.5rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.persona[data-voice="a"] {
+  --voice: var(--voice-a);
+}
+
+.persona[data-voice="b"] {
+  --voice: var(--voice-b);
+}
+
+.persona::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+  border: 2px solid transparent;
+  pointer-events: none;
+  transition: border-color 0.25s ease;
+}
+
+.persona.is-active {
+  box-shadow: var(--shadow-hover);
+}
+
+.persona.is-active::before {
+  border-color: var(--voice);
+}
+
+.persona__role {
+  margin: 0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: var(--voice);
+}
+
+.persona__name {
+  margin: 0.4rem 0 0.15rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.persona__id {
+  margin: 0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* 波形（待機時は静止、発話時のみアニメ） */
+.wave {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 28px;
+  margin-top: 1.25rem;
+}
+
+.wave span {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  transition: background 0.25s ease;
+}
+
+.persona.is-active .wave span {
+  background: var(--voice);
+  animation: wave 0.9s ease-in-out infinite;
+}
+
+.persona.is-active .wave span:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.persona.is-active .wave span:nth-child(3) {
+  animation-delay: 0.24s;
+}
+.persona.is-active .wave span:nth-child(4) {
+  animation-delay: 0.36s;
+}
+.persona.is-active .wave span:nth-child(5) {
+  animation-delay: 0.48s;
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    height: 6px;
+  }
+  50% {
+    height: 26px;
+  }
+}
+
+/* ---------- Dialogue Bridge（シグネチャ） ---------- */
+.bridge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.bridge__line {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.bridge__pulse {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 38%;
+  height: 9px;
+  border-radius: 6px;
+  transform: translate(-120%, -50%);
+  opacity: 0;
+  background: var(--accent-grad);
+}
+
+.bridge[data-dir="ab"] .bridge__pulse {
+  opacity: 1;
+  background: linear-gradient(90deg, var(--voice-a), var(--cyan));
+  animation: pulse-ab 1.4s linear infinite;
+}
+
+.bridge[data-dir="ba"] .bridge__pulse {
+  opacity: 1;
+  background: linear-gradient(90deg, var(--cyan), var(--voice-b));
+  animation: pulse-ba 1.4s linear infinite;
+}
+
+@keyframes pulse-ab {
+  from {
+    transform: translate(-120%, -50%);
+  }
+  to {
+    transform: translate(320%, -50%);
+  }
+}
+
+@keyframes pulse-ba {
+  from {
+    transform: translate(320%, -50%);
+  }
+  to {
+    transform: translate(-120%, -50%);
+  }
+}
+
+.bridge__status {
+  margin: 0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* ---------- コントロール ---------- */
+.controls__form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-rest);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 160px;
+}
+
+.field--grow {
+  flex: 1 1 240px;
+}
+
+.field--narrow {
+  min-width: 96px;
+  flex: 0 0 96px;
+}
+
+.field__label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.field__input {
+  font: inherit;
+  color: var(--ink);
+  padding: 0.6rem 0.75rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field__input:focus-visible {
+  outline: none;
+  border-color: var(--blue-bright);
+  box-shadow: 0 0 0 3px rgba(0, 144, 212, 0.18);
+}
+
+.controls__buttons {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-end;
+}
+
+.btn {
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.65rem 1.3rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--blue-bright);
+  outline-offset: 2px;
+}
+
+.btn--primary {
+  color: #fff;
+  background: var(--accent-grad);
+  box-shadow: 0 6px 16px rgba(0, 103, 168, 0.22);
+}
+
+.btn--primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 144, 212, 0.28);
+}
+
+.btn--secondary {
+  color: var(--ink);
+  background: transparent;
+  border-color: var(--line);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  border-color: var(--blue-bright);
+  color: var(--brand-blue);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- 実行モード切替（セグメントトグル） ---------- */
+.controls__mode {
+  margin-bottom: 1.25rem;
+}
+
+.modeswitch {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+  padding: 0.4rem;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.modeswitch__seg {
+  position: relative;
+  cursor: pointer;
+}
+
+/* 実体のラジオは隠し、ラベル全体をクリック面にする */
+.modeswitch__seg input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modeswitch__face {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  height: 100%;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.modeswitch__title {
+  font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: 0.01em;
+}
+
+.modeswitch__sub {
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.modeswitch__seg:hover .modeswitch__face {
+  background: var(--paper);
+  border-color: var(--line);
+}
+
+.modeswitch__seg input:checked + .modeswitch__face {
+  background: var(--accent-grad);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(0, 103, 168, 0.22);
+}
+
+.modeswitch__seg input:checked + .modeswitch__face .modeswitch__sub {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.modeswitch__seg input:focus-visible + .modeswitch__face {
+  outline: 2px solid var(--blue-bright);
+  outline-offset: 2px;
+}
+
+.modeswitch__hint {
+  margin: 0.75rem 0 0;
+  min-height: 1.2em;
+  font-size: 0.85rem;
+  font-family: "IBM Plex Mono", monospace;
+  color: var(--muted);
+}
+
+.modeswitch__hint[data-tone="ok"] {
+  color: var(--ok);
+}
+
+.modeswitch__hint[data-tone="warn"] {
+  color: var(--warn);
+}
+
+@media (max-width: 720px) {
+  .modeswitch {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* hidden 属性を .field の display:flex より優先する */
+.field[hidden] {
+  display: none;
+}
+
+.controls__note {
+  margin: 0.85rem 0 0;
+  min-height: 1.2em;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.controls__note[data-tone="error"] {
+  color: var(--err);
+}
+
+.controls__note[data-tone="ok"] {
+  color: var(--ok);
+}
+
+/* ---------- 会話ログ ---------- */
+.log__empty {
+  margin: 0;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-card);
+}
+
+.log__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bubble {
+  --voice: var(--voice-a);
+  max-width: min(78%, 640px);
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--voice);
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: var(--shadow-rest);
+}
+
+.bubble[data-voice="b"] {
+  --voice: var(--voice-b);
+  align-self: flex-end;
+  border-left: 1px solid var(--line);
+  border-right: 3px solid var(--voice);
+}
+
+.bubble__meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 0.25rem;
+}
+
+.bubble__name {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--voice);
+}
+
+.bubble__time {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.7rem;
+  color: var(--idle);
+}
+
+.bubble__text {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---------- ロードイン ---------- */
+.hero,
+.stage,
+.controls {
+  animation: rise 0.5s ease both;
+}
+
+.stage {
+  animation-delay: 0.08s;
+}
+
+.controls {
+  animation-delay: 0.16s;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- レスポンシブ ---------- */
+@media (max-width: 720px) {
+  .stage {
+    grid-template-columns: 1fr;
+  }
+
+  .bridge {
+    flex-direction: row;
+    gap: 0.6rem;
+  }
+
+  .bridge__line {
+    height: 36px;
+    width: 3px;
+  }
+
+  .bridge__pulse {
+    width: 9px;
+    height: 38%;
+    left: 50%;
+    background: var(--accent-grad);
+  }
+
+  .bridge[data-dir="ab"] .bridge__pulse,
+  .bridge[data-dir="ba"] .bridge__pulse {
+    animation: pulse-vertical 1.4s linear infinite;
+  }
+
+  @keyframes pulse-vertical {
+    from {
+      transform: translate(-50%, -120%);
+    }
+    to {
+      transform: translate(-50%, 320%);
+    }
+  }
+
+  .bubble,
+  .bubble[data-voice="b"] {
+    max-width: 100%;
+    align-self: stretch;
+  }
+}
+
+/* ---------- モーション抑制 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .persona.is-active .wave span {
+    height: 18px;
+  }
+
+  .bridge[data-dir="ab"] .bridge__pulse,
+  .bridge[data-dir="ba"] .bridge__pulse {
+    opacity: 1;
+    transform: translate(100%, -50%);
+  }
+}
